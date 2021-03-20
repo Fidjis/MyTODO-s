@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_todo_s/helper/auth_service.dart';
 import 'package:my_todo_s/screens/home_screen.dart';
+import 'package:my_todo_s/screens/login_screen.dart';
 
 class IntroScreen extends StatefulWidget {
   @override
@@ -38,7 +39,10 @@ class _IntroScreenState extends State<IntroScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   OutlinedButton(
-                    onPressed: () {  }, 
+                    onPressed: () {
+                      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                    }, 
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text('Registrar', style: TextStyle(color: primaryColor),),
@@ -89,7 +93,10 @@ class _IntroScreenState extends State<IntroScreen> {
                       primary: primaryColor, // background
                       onPrimary: Colors.white, // foreground
                     ),
-                    onPressed: () {  },
+                    onPressed: () {
+                      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                    },
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(14.0, 8.0, 14.0, 8.0),
                       child: Text('Login', style: TextStyle(color: segundaryColor),),
@@ -121,7 +128,6 @@ class _IntroScreenState extends State<IntroScreen> {
 
   Padding buildBackgroundAppNameShadow() {
     return Padding(
-      //padding: const EdgeInsets.fromLTRB(20.0, 35.0, 20.0, 20.0,),
       padding: const EdgeInsets.fromLTRB(5.0, 5.0, 0.0, 0.0,),
       child: Text(
         "MyTODO's",
