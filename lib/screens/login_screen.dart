@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:my_todo_s/helper/auth_service.dart';
 import 'package:my_todo_s/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
+
+  final bool newAcc;
+
+  LoginScreen(this.newAcc);
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
 
-  bool newAcc = false;
+  bool newAcc;
   bool _obscureTextLogin = true;
   bool visibleSenha2 = false;
   double heightNewAcc = 0;
@@ -24,8 +30,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    
+    newAcc = widget.newAcc;
+    if(!newAcc){
+      heightNewAcc = 0;
+      visibleSenha2 = false;
+    } else {
+      heightNewAcc = 90;
+      visibleSenha2 = true;
+    }
     super.initState();
+  }
+
+  _chageModeWithDeley(bool val){
+    Future.delayed(const Duration(milliseconds: 3000), () {
+      setState(() {
+        newAcc = val;
+      });
+    });
   }
 
   @override
@@ -152,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     size: 22.0,
                                     color: Colors.black54,
                                   ),
-                                  hintText: "Senha",
+                                  hintText: "Password",
                                   hintStyle: TextStyle(
                                     fontFamily: "WorkSansSemiBold", fontSize: 17.0),
                                   suffixIcon: GestureDetector(
@@ -206,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             size: 22.0,
                                             color: Colors.black54,
                                           ),
-                                          hintText: "Confirmar Senha",
+                                          hintText: "Confirm Password",
                                           hintStyle: TextStyle(
                                             fontFamily: "WorkSansSemiBold", fontSize: 17.0),
                                           suffixIcon: GestureDetector(
@@ -239,19 +260,21 @@ class _LoginScreenState extends State<LoginScreen> {
             child: FloatingActionButton.extended(
               onPressed: (){
                 setState(() {
-                  
-                  if(newAcc){
-                    heightNewAcc = 0;
-                    visibleSenha2 = false;
-                  } else {
-                    heightNewAcc = 90;
-                    //newAcount = false;
-                  }
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-                  // if(newAcc)
-                  //   createUserLogin();
-                  // else
-                  //   login();
+                  // if(newAcc){
+                  //   heightNewAcc = 0;
+                  //   visibleSenha2 = false;
+                  // } else {
+                  //   heightNewAcc = 90;
+                  //   //newAcount = false;
+                  // }
+                  if(loginPasswordController01.text.length > 0)
+                    if(newAcc)
+                      if(loginPasswordController01.text == loginPasswordController02.text)
+                        AuthService().createUserLogin(loginEmailController.text, loginPasswordController01.text).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen())));
+                    else
+                      AuthService().signIn(loginEmailController.text, loginPasswordController01.text).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen())));
+                  else
+                    showInSnackBar("Fill in all the fields!");
                 });
               },
                 heroTag: "login",
@@ -263,10 +286,10 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: EdgeInsets.only(top: 10.0),
             child: TextButton(
               onPressed: () {
-                showInSnackBar("Aguarde as atualizações");
+                showInSnackBar("Wait for updates!");
               },
               child: Text(
-                "Esqueceu a senha?",
+                "Forgot Password?",
                 style: TextStyle(
                   decoration: TextDecoration.underline,
                   color: terciaryColor,

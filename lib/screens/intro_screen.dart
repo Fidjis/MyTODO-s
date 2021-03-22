@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:my_todo_s/helper/auth_service.dart';
+import 'package:my_todo_s/helper/helper_functions.dart';
 import 'package:my_todo_s/screens/home_screen.dart';
 import 'package:my_todo_s/screens/login_screen.dart';
+import 'package:my_todo_s/stores/principal_store.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class IntroScreen extends StatefulWidget {
   @override
@@ -13,12 +18,30 @@ class _IntroScreenState extends State<IntroScreen> {
   var primaryColor = const Color(0xFF008080);
   var segundaryColor = Colors.white;
   var terciaryColor = const Color(0xFF20B2AA);
-  bool isLoading = false;
   AuthService authService = new AuthService();
+  final store = PrincipalSt();
+
+  @override
+  void initState() {
+    super.initState();
+    getLoggedInState();
+  }
+
+  getLoggedInState() async {
+    store.setIsLoading(true);
+    await HelperFunctions.getUserLoggedInSharedPreference().then((value){
+      store.setLogged(value);
+      
+      Future.delayed(const Duration(milliseconds: 3000), () {
+        store.setIsLoading(false);
+      });
+    });
+  }
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Observer(
+      builder: (_) => Scaffold(
       body: Stack(
         alignment: Alignment.center,
         children: [
@@ -28,85 +51,89 @@ class _IntroScreenState extends State<IntroScreen> {
           Container(color: Colors.white70.withOpacity(0.5),),
           buildBackgroundAppName(),
           buildBackgroundAppNameShadow(),
-          Positioned(
-            bottom: 0.0, 
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.all(20),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment:  MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  OutlinedButton(
-                    onPressed: () {
-                      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-                    }, 
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('Registrar', style: TextStyle(color: primaryColor),),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: new LinearGradient(
-                        colors: [
-                          Colors.white10,
-                          primaryColor,
-                        ],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                    ),
-                    width: 50.0,
-                    height: 1.0,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                    child: Text(
-                      "Ou",
-                      style: TextStyle(
-                        color: primaryColor,
-                        fontSize: 16.0,
-                        fontFamily: "WorkSansMedium"),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: new LinearGradient(
-                        colors: [
-                          primaryColor,
-                          Colors.white10,
-                        ],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                    ),
-                    width: 50.0,
-                    height: 1.0,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: primaryColor, // background
-                      onPrimary: Colors.white, // foreground
-                    ),
-                    onPressed: () {
-                      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(14.0, 8.0, 14.0, 8.0),
-                      child: Text('Login', style: TextStyle(color: segundaryColor),),
-                    ),
-                  )
-                ],
+          _buildBottom(),
+        ],
+      ),
+    ));
+  }
+
+  Positioned _buildBottom() {
+    return Positioned(
+      bottom: 0.0, 
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.all(20),
+        color: Colors.white,
+        child: store.isLoading ? Center(child: CircularProgressIndicator()) : Row(
+          mainAxisAlignment:  MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            OutlinedButton(
+              onPressed: () {
+                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(true)));
+              }, 
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Registrar', style: TextStyle(color: primaryColor),),
               ),
             ),
-          )
-        ],
+            Container(
+              decoration: BoxDecoration(
+                gradient: new LinearGradient(
+                  colors: [
+                    Colors.white10,
+                    primaryColor,
+                  ],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 1.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp),
+              ),
+              width: 50.0,
+              height: 1.0,
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 15.0, right: 15.0),
+              child: Text(
+                "Ou",
+                style: TextStyle(
+                  color: primaryColor,
+                  fontSize: 16.0,
+                  fontFamily: "WorkSansMedium"),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: new LinearGradient(
+                  colors: [
+                    primaryColor,
+                    Colors.white10,
+                  ],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 1.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp),
+              ),
+              width: 50.0,
+              height: 1.0,
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: primaryColor, // background
+                onPrimary: Colors.white, // foreground
+              ),
+              onPressed: () {
+                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(false)));
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14.0, 8.0, 14.0, 8.0),
+                child: Text('Login', style: TextStyle(color: segundaryColor),),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -143,22 +170,22 @@ class _IntroScreenState extends State<IntroScreen> {
 
   signIn() async {
     //if (formKey.currentState.validate()) {
-      setState(() {
-        isLoading = true;
-      });
+      // setState(() {
+      //   isLoading = true;
+      // });
 
       //sing in normal
       //await authService.signInWithEmailAndPassword(emailEditingController.text, passwordEditingController.text)
       //singi google
-      await authService.signIn()
+      await authService.signIn(null, null)
         .then((result) async {
           if (result != null)  {
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
           } else {
-            setState(() {
-              isLoading = false;
-              //show snackbar
-            });
+            // setState(() {
+            //   isLoading = false;
+            //   //show snackbar
+            // });
           }
         });
     //}
