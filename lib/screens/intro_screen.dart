@@ -61,6 +61,10 @@ class _IntroScreenState extends State<IntroScreen> {
           buildBackgroundAppName(),
           buildBackgroundAppNameShadow(),
           _buildBottom(),
+          FloatingActionButton(onPressed: () async {
+            bool user = await DatabaseMethods().createTask("d4b95036-9d63-4356-814a-3a20768b10ce", "teste 1");
+            print(user);
+          })
         ],
       ),
     ));
@@ -68,7 +72,7 @@ class _IntroScreenState extends State<IntroScreen> {
 
   Positioned _buildBottom() {
     return Positioned(
-      bottom: 0.0, 
+      bottom: 0.0,
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.all(20),

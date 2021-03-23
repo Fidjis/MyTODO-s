@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:my_todo_s/services/database.dart';
 
 class CheckboxWidget extends StatefulWidget {
 
   final bool checkedValue;
   final String text;
+  final String id;
 
-  CheckboxWidget({@required this.checkedValue, @required this.text});
+  CheckboxWidget({@required this.checkedValue, @required this.text, @required this.id});
 
   @override
   _CheckboxWidgetState createState() => _CheckboxWidgetState();
@@ -27,9 +29,20 @@ class _CheckboxWidgetState extends State<CheckboxWidget> {
       onChanged: (newValue) {
         setState(() {
           checkedValue = newValue;
+          updateTask();
         });
       },
       controlAffinity: ListTileControlAffinity.leading, 
     );
+  }
+
+  updateTask() async {
+    bool result = await DatabaseMethods().updateTask(widget.id, !widget.checkedValue);
+    if(result)
+      print("Sucesssooooooo");
+      // showInSnackBar("Task Added!");
+    else
+      print("Errrooooooo");
+      // showInSnackBar("Error!");
   }
 }

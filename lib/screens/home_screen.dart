@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_todo_s/helper/auth_service.dart';
+import 'package:my_todo_s/helper/consts.dart';
+import 'package:my_todo_s/models/task_model.dart';
 import 'package:my_todo_s/screens/intro_screen.dart';
 import 'package:my_todo_s/services/database.dart';
 import 'package:my_todo_s/widgets/checkbox_widget.dart';
@@ -16,6 +18,13 @@ class _HomeScreenState extends State<HomeScreen> {
   var terciaryColor = const Color(0xFF20B2AA);
   TextEditingController newTaskEditingController = new TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    getTasksToDo();
+    getTasksDone();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,14 +77,40 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
     Flexible(
       child: ListView.builder(
-        // physics: NeverScrollableScrollPhysics(),
-        // shrinkWrap: true,
-        itemCount:18,
+        itemCount: tasksToDo.length,
         itemBuilder: (context,index){
-          return  CheckboxWidget(checkedValue: false, text: 'Dever de casa',);
+          return CheckboxWidget(checkedValue: tasksToDo[index]["done"], text: tasksToDo[index]["description"], id: tasksToDo[index]["id"]);
         })
     )
   ],);
+
+  List<dynamic> tasksToDo = new List<dynamic>();
+  getTasksToDo() async {
+    DatabaseMethods().getTasks(Consts.userID, false).then((snapshots) {
+      snapshots.listen((data) {
+        setState(() {
+          tasksToDo = data['data']["tasks"];
+          print(data['data']["tasks"]);
+        });
+      }).onError((err) {
+        print(err);
+      });
+    });
+  }
+  List<dynamic> tasksDone = new List<dynamic>();
+  getTasksDone() async {
+    DatabaseMethods().getTasks(Consts.userID, true).then((snapshots) {
+      snapshots.listen((data) {
+        setState(() {
+          //tasksToDo = data['data']["tasks"];
+          tasksDone = data['data']["tasks"];
+          print(data['data']["tasks"]);
+        });
+      }).onError((err) {
+        print(err);
+      });
+    });
+  }
 
   Column _buildMyTasksComplete() => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Text(
@@ -90,18 +125,40 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView.builder(
         // physics: NeverScrollableScrollPhysics(),
         // shrinkWrap: true,
-        itemCount:18,
+        itemCount: tasksDone.length,
         itemBuilder: (context,index){
-          return CheckboxWidget(checkedValue: true, text: 'Dever de casa',);
+          return CheckboxWidget(checkedValue: tasksDone[index]["done"], text: tasksDone[index]["description"], id: tasksDone[index]["id"]);
         })
     )
-    
   ],);
 
-  addNewTask() {
+  addNewTask() async {
     if(newTaskEditingController.text.isNotEmpty){
-      
+      bool result = await DatabaseMethods().createTask(Consts.userID, newTaskEditingController.text);
+      if(result)
+        showInSnackBar("Task Added!");
+      else
+        showInSnackBar("Error!");
     }
+    else
+      showInSnackBar("Fill in all fields!");
+  }
+
+  void showInSnackBar(String value) {
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scaffoldKey.currentState?.removeCurrentSnackBar();
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.0,
+            fontFamily: "WorkSansSemiBold"),
+      ),
+      backgroundColor: terciaryColor,
+      duration: Duration(seconds: 3),
+    ));
   }
 
   _buildNewTaskWidget() {
