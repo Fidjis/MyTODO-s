@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:my_todo_s/helper/auth_service.dart';
+import 'package:my_todo_s/helper/consts.dart';
 import 'package:my_todo_s/helper/helper_functions.dart';
+import 'package:my_todo_s/models/user_model.dart';
 import 'package:my_todo_s/screens/home_screen.dart';
 import 'package:my_todo_s/screens/login_screen.dart';
+import 'package:my_todo_s/services/database.dart';
 import 'package:my_todo_s/stores/principal_store.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -31,9 +34,15 @@ class _IntroScreenState extends State<IntroScreen> {
     store.setIsLoading(true);
     await HelperFunctions.getUserLoggedInSharedPreference().then((value){
       store.setLogged(value);
-      
-      Future.delayed(const Duration(milliseconds: 3000), () {
+
+      Future.delayed(const Duration(milliseconds: 3000), () async {
         store.setIsLoading(false);
+        if(value){
+          Consts.userEmail = await HelperFunctions.getUserEmailSharedPreference();
+          Consts.userID = await HelperFunctions.getUserIdSharedPreference();
+          Consts.userName = await HelperFunctions.getUserNameSharedPreference();
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        }
       });
     });
   }
@@ -166,28 +175,5 @@ class _IntroScreenState extends State<IntroScreen> {
         ),
       ),
     );
-  }
-
-  signIn() async {
-    //if (formKey.currentState.validate()) {
-      // setState(() {
-      //   isLoading = true;
-      // });
-
-      //sing in normal
-      //await authService.signInWithEmailAndPassword(emailEditingController.text, passwordEditingController.text)
-      //singi google
-      await authService.signIn(null, null)
-        .then((result) async {
-          if (result != null)  {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-          } else {
-            // setState(() {
-            //   isLoading = false;
-            //   //show snackbar
-            // });
-          }
-        });
-    //}
   }
 }

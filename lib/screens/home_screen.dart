@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:my_todo_s/helper/auth_service.dart';
+import 'package:my_todo_s/screens/intro_screen.dart';
 import 'package:my_todo_s/services/database.dart';
 import 'package:my_todo_s/widgets/checkbox_widget.dart';
 
@@ -37,7 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: primaryColor
                     )
                   ),
-                  FloatingActionButton(mini: true, backgroundColor: primaryColor, onPressed: (){Navigator.of(context).pop();}, child: Icon(Icons.logout),),
+                  FloatingActionButton(mini: true, backgroundColor: primaryColor, onPressed: () async {
+                    if(await AuthService().signOut())
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => IntroScreen()));
+                    }, 
+                    child: Icon(Icons.logout),
+                  ),
                 ],
               ),
               Padding(padding: EdgeInsets.only(top: 20, bottom: 20), child: _buildNewTaskWidget(),),

@@ -260,21 +260,30 @@ class _LoginScreenState extends State<LoginScreen> {
             child: FloatingActionButton.extended(
               onPressed: (){
                 setState(() {
-                  // if(newAcc){
-                  //   heightNewAcc = 0;
-                  //   visibleSenha2 = false;
-                  // } else {
-                  //   heightNewAcc = 90;
-                  //   //newAcount = false;
-                  // }
-                  if(loginPasswordController01.text.length > 0)
-                    if(newAcc)
-                      if(loginPasswordController01.text == loginPasswordController02.text)
-                        AuthService().createUserLogin(loginEmailController.text, loginPasswordController01.text).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen())));
-                    else
-                      AuthService().signIn(loginEmailController.text, loginPasswordController01.text).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen())));
-                  else
+                  if(loginPasswordController01.text.length > 4 && RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(loginEmailController.text)){
+                    if(newAcc){
+                      if(loginPasswordController01.text == loginPasswordController02.text) {
+                        AuthService().createUserLogin(loginEmailController.text, loginPasswordController01.text).then((sucess) {
+                          if(sucess) 
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+                          else
+                            showInSnackBar("Error!");
+                        });
+                      }else{
+                        showInSnackBar("Password not match!");
+                      }
+                    }
+                    else{
+                      AuthService().signIn(loginEmailController.text, loginPasswordController01.text).then((sucess) {
+                        if(sucess) 
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+                        else
+                          showInSnackBar("Incorrect credentials");
+                      });
+                    }
+                  }else{
                     showInSnackBar("Fill in all the fields!");
+                  }
                 });
               },
                 heroTag: "login",

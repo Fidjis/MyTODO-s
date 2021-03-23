@@ -1,5 +1,5 @@
 class User {
-  final int id;
+  final String id;
   final String name;
   final DateTime created_at;
   final DateTime updated_at;
