@@ -1,7 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fidjis.my_todo_s">
+
+  <uses-permission android:name="ANDROID.PERMISSION.INTERNET" />
+
    <application
-        android:label="my_todo_s"
+        android:label="My TODO's"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
