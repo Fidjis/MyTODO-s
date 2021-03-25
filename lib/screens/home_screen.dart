@@ -35,28 +35,33 @@ class _HomeScreenState extends State<HomeScreen> {
     if (screenWidth < 600.0) { //smartphones
       return _buildBody(); 
     }
-    else if (screenWidth < 1000.0) { //tablet
-      return Stack(
-        children: [
-          Image.asset('assets/background_large.jpeg', fit: BoxFit.cover, height: double.infinity, width: double.infinity, alignment: Alignment.center,),
-          Container(
-            margin: EdgeInsets.fromLTRB(screenWidth * 0.2, screenHeight * 0.1, screenWidth * 0.2, screenHeight * 0.1),
-            child: Card(elevation: 9, shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(30.0),), child: _buildBody(),),
-          ),
-        ],
-      );
+    else if (screenWidth < 800.0) { //tablet
+      return _buildPersonalSizeScreen(screenWidth, screenHeight, 0.08, 0.1, 0.08, 0.1);
+    }
+    else if (screenWidth < 1200.0) { //navegador e Desktop
+      return _buildPersonalSizeScreen(screenWidth, screenHeight, 0.1, 0.1, 0.1, 0.1);
+    }
+    else if (screenWidth < 1500.0) { //navegador e Desktop
+      return _buildPersonalSizeScreen(screenWidth, screenHeight, 0.15, 0.1, 0.15, 0.1);
+    }
+    else if (screenWidth < 1800.0) { //navegador e Desktop
+      return _buildPersonalSizeScreen(screenWidth, screenHeight, 0.22, 0.1, 0.22, 0.1);
     }
     else { //navegador e Desktop
-      return Stack(
-        children: [
-          Image.asset('assets/background_large.jpeg', fit: BoxFit.cover, height: double.infinity, width: double.infinity, alignment: Alignment.center,),
-          Container(
-            margin: EdgeInsets.fromLTRB(screenWidth * 0.2, screenHeight * 0.1, screenWidth * 0.2, screenHeight * 0.1),
-            child: Card(elevation: 9, shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(30.0),), child: _buildBody(),),
-          ),
-        ],
-      );
+      return _buildPersonalSizeScreen(screenWidth, screenHeight, 0.3, 0.1, 0.3, 0.1);
     }
+  }
+
+  Stack _buildPersonalSizeScreen(double screenWidth, double screenHeight, double l, double t, double r, double b) {
+    return Stack(
+      children: [
+        Image.asset('assets/background_large.jpeg', fit: BoxFit.cover, height: double.infinity, width: double.infinity, alignment: Alignment.center,),
+        Container(
+          margin: EdgeInsets.fromLTRB(screenWidth * l, screenHeight * t, screenWidth * r, screenHeight * b),
+          child: Container(margin: EdgeInsets.all(20), padding: EdgeInsets.all(20), child: Card(elevation: 9, shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(30.0),),child: _buildBody(),)),
+        ),
+      ],
+    );
   }
 
   Scaffold _buildBody() {
