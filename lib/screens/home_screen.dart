@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:my_todo_s/helper/auth_service.dart';
 import 'package:my_todo_s/helper/consts.dart';
-import 'package:my_todo_s/models/task_model.dart';
+import 'package:my_todo_s/helper/helper_functions.dart';
 import 'package:my_todo_s/screens/intro_screen.dart';
 import 'package:my_todo_s/services/database.dart';
+import 'package:my_todo_s/stores/principal_store.dart';
 import 'package:my_todo_s/widgets/checkbox_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,12 +13,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  
-  var primaryColor = const Color(0xFF008080);
-  var segundaryColor = Colors.white;
-  var terciaryColor = const Color(0xFF20B2AA);
+
   TextEditingController newTaskEditingController = new TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final store = PrincipalSt();
+
+  List<dynamic> tasksDone = new List.filled(0, 0);
+  List<dynamic> tasksToDo = new List.filled(0, 0);
 
   @override
   void initState() {
@@ -28,6 +30,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    if (screenWidth < 600.0) { //smartphones
+      return _buildBody(); 
+    }
+    else if (screenWidth < 1000.0) { //tablet
+      return Stack(
+        children: [
+          Image.asset('assets/background_large.jpeg', fit: BoxFit.cover, height: double.infinity, width: double.infinity, alignment: Alignment.center,),
+          Container(
+            margin: EdgeInsets.fromLTRB(screenWidth * 0.2, screenHeight * 0.1, screenWidth * 0.2, screenHeight * 0.1),
+            child: Card(elevation: 9, shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(30.0),), child: _buildBody(),),
+          ),
+        ],
+      );
+    }
+    else { //navegador e Desktop
+      return Stack(
+        children: [
+          Image.asset('assets/background_large.jpeg', fit: BoxFit.cover, height: double.infinity, width: double.infinity, alignment: Alignment.center,),
+          Container(
+            margin: EdgeInsets.fromLTRB(screenWidth * 0.2, screenHeight * 0.1, screenWidth * 0.2, screenHeight * 0.1),
+            child: Card(elevation: 9, shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(30.0),), child: _buildBody(),),
+          ),
+        ],
+      );
+    }
+  }
+
+  Scaffold _buildBody() {
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
@@ -45,12 +77,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight .bold,
-                      color: primaryColor
+                      color: Consts.primaryColor
                     )
                   ),
-                  FloatingActionButton(mini: true, backgroundColor: primaryColor, onPressed: () async {
-                    if(await AuthService().signOut())
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => IntroScreen()));
+                  FloatingActionButton(
+                    mini: true, 
+                    backgroundColor: Consts.primaryColor, 
+                    onPressed: () {
+                      AuthService().signOut().then((value){
+                        if(value){
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => IntroScreen()));
+                        }
+                      });
                     }, 
                     child: Icon(Icons.logout),
                   ),
@@ -72,9 +110,11 @@ class _HomeScreenState extends State<HomeScreen> {
       style: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: primaryColor
+        color: Consts.primaryColor
       )
     ),
+    store.isLoadingTaskToDo ?
+    Flexible(child: Center(child: CircularProgressIndicator(),)) :
     Flexible(
       child: ListView.builder(
         itemCount: tasksToDo.length,
@@ -84,23 +124,25 @@ class _HomeScreenState extends State<HomeScreen> {
     )
   ],);
 
-  List<dynamic> tasksToDo = new List<dynamic>();
   getTasksToDo() async {
     DatabaseMethods().getTasks(Consts.userID, false).then((snapshots) {
       snapshots.listen((data) {
+        store.setiIsLoadingTaskToDo(false);
         setState(() {
           tasksToDo = data['data']["tasks"];
           print(data['data']["tasks"]);
         });
       }).onError((err) {
         print(err);
+        store.setiIsLoadingTaskToDo(false);
       });
     });
   }
-  List<dynamic> tasksDone = new List<dynamic>();
+  
   getTasksDone() async {
     DatabaseMethods().getTasks(Consts.userID, true).then((snapshots) {
       snapshots.listen((data) {
+        store.setIsLoadingTaskDone(false);
         setState(() {
           //tasksToDo = data['data']["tasks"];
           tasksDone = data['data']["tasks"];
@@ -108,19 +150,23 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }).onError((err) {
         print(err);
+        store.setIsLoadingTaskDone(false);
       });
     });
   }
 
   Column _buildMyTasksComplete() => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    SizedBox(height: 5.0,),
     Text(
       'DONE',
       style: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: primaryColor
+        color: Consts.primaryColor
       )
     ),
+    store.isLoadingTaskDone ?
+    Flexible(child: Center(child: CircularProgressIndicator(),)) :
     Flexible(
       child: ListView.builder(
         // physics: NeverScrollableScrollPhysics(),
@@ -136,29 +182,14 @@ class _HomeScreenState extends State<HomeScreen> {
     if(newTaskEditingController.text.isNotEmpty){
       bool result = await DatabaseMethods().createTask(Consts.userID, newTaskEditingController.text);
       if(result)
-        showInSnackBar("Task Added!");
+        HelperFunctions.showInSnackBar("Task Added!", _scaffoldKey, context, Consts.terciaryColor);
       else
-        showInSnackBar("Error!");
+        HelperFunctions.showInSnackBar("Error!", _scaffoldKey, context, Consts.terciaryColor);
     }
     else
-      showInSnackBar("Fill in all fields!");
-  }
+      HelperFunctions.showInSnackBar("Fill in all fields!", _scaffoldKey, context, Consts.terciaryColor);
 
-  void showInSnackBar(String value) {
-    FocusScope.of(context).requestFocus(new FocusNode());
-    _scaffoldKey.currentState?.removeCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(
-        value,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-            fontFamily: "WorkSansSemiBold"),
-      ),
-      backgroundColor: terciaryColor,
-      duration: Duration(seconds: 3),
-    ));
+    newTaskEditingController.text = "";
   }
 
   _buildNewTaskWidget() {
@@ -169,10 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: newTaskEditingController,
             decoration: InputDecoration(
               hintText: "New Task...",
-              hintStyle: TextStyle(color: segundaryColor),
+              hintStyle: TextStyle(color: Consts.segundaryColor),
               //prefixIcon: Icon(Icons.search,color: Colors.grey.shade600, size: 20,),
               filled: true,
-              fillColor: terciaryColor,
+              fillColor: Consts.terciaryColor,
               contentPadding: EdgeInsets.all(8),
               enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -190,14 +221,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                side: BorderSide(width: 2, color: terciaryColor),
+                side: BorderSide(width: 2, color: Consts.terciaryColor),
             ),
             onPressed: () {
               addNewTask();
             },
             child: Icon(
               Icons.add,
-              color: terciaryColor,
+              color: Consts.terciaryColor,
             ),
           ),
         ),

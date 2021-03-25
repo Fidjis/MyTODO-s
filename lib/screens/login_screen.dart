@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:my_todo_s/helper/auth_service.dart';
+import 'package:my_todo_s/helper/consts.dart';
+import 'package:my_todo_s/helper/helper_functions.dart';
 import 'package:my_todo_s/screens/home_screen.dart';
+import 'package:my_todo_s/stores/principal_store.dart';
 
 class LoginScreen extends StatefulWidget {
 
@@ -19,14 +23,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool visibleSenha2 = false;
   double heightNewAcc = 0;
 
+  final store = PrincipalSt();
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController loginEmailController = new TextEditingController();
   TextEditingController loginPasswordController01 = new TextEditingController();
   TextEditingController loginPasswordController02 = new TextEditingController();
-
-  var primaryColor = const Color(0xFF008080);
-  var segundaryColor = Colors.white;
-  var terciaryColor = const Color(0xFF20B2AA);
 
   @override
   void initState() {
@@ -41,59 +43,71 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 
-  _chageModeWithDeley(bool val){
-    Future.delayed(const Duration(milliseconds: 3000), () {
-      setState(() {
-        newAcc = val;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 25.0),
-              child: FloatingActionButton(mini: true, backgroundColor: primaryColor, onPressed: (){Navigator.of(context).pop();}, child: Icon(Icons.keyboard_arrow_left_outlined), ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 30.0),
-              child: Text(
-                newAcc? 'Register' : 'Login',
-                style: TextStyle(
-                  fontSize: 45,
-                  fontWeight: FontWeight .bold,
-                  color: primaryColor
-                )
-              ),
-            ),
-            _buildSignIn(),
-          ],
-        ),
-      ),
-    );
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    if (screenWidth < 600.0) { //smartphones
+      return _buildBody(); 
+    }
+    else if (screenWidth < 1000.0) { //tablet
+      return Stack(
+        children: [
+          Image.asset('assets/background_large.jpeg', fit: BoxFit.cover, height: double.infinity, width: double.infinity, alignment: Alignment.center,),
+          Container(
+            margin: EdgeInsets.fromLTRB(screenWidth * 0.2, screenHeight * 0.1, screenWidth * 0.2, screenHeight * 0.1),
+            child: Card(elevation: 9, shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(30.0),), child: _buildBody(),),
+          ),
+        ],
+      );
+    }
+    else { //navegador e Desktop
+      return Stack(
+        children: [
+          Image.asset('assets/background_large.jpeg', fit: BoxFit.cover, height: double.infinity, width: double.infinity, alignment: Alignment.center,),
+          Container(
+            margin: EdgeInsets.fromLTRB(screenWidth * 0.2, screenHeight * 0.1, screenWidth * 0.2, screenHeight * 0.1),
+            child: Card(elevation: 9, shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(30.0),), child: _buildBody(),),
+          ),
+        ],
+      );
+    }
   }
 
-  void showInSnackBar(String value) {
-    FocusScope.of(context).requestFocus(new FocusNode());
-    _scaffoldKey.currentState?.removeCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(
-        value,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-            fontFamily: "WorkSansSemiBold"),
+  _buildBody() {
+    return Observer(
+      builder: (_) =>Scaffold(
+      key: _scaffoldKey,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 25.0),
+                child: FloatingActionButton(mini: true, backgroundColor: Consts.primaryColor, onPressed: (){
+                  Navigator.of(context).pop();
+                }, 
+                child: Icon(Icons.keyboard_arrow_left_outlined),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0),
+                child: Text(
+                  newAcc? 'Register' : 'Login',
+                  style: TextStyle(
+                    fontSize: 45,
+                    fontWeight: FontWeight .bold,
+                    color: Consts.primaryColor
+                  )
+                ),
+              ),
+              SizedBox(height:50),
+              Center(child:_buildSignIn()),
+            ],
+          ),
+        ),
       ),
-      backgroundColor: terciaryColor,
-      duration: Duration(seconds: 3),
     ));
   }
 
@@ -259,49 +273,56 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: const EdgeInsets.only(top: 40.0),
             child: FloatingActionButton.extended(
               onPressed: (){
-                setState(() {
-                  if(loginPasswordController01.text.length > 4 && RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(loginEmailController.text)){
-                    if(newAcc){
-                      if(loginPasswordController01.text == loginPasswordController02.text) {
-                        AuthService().createUserLogin(loginEmailController.text, loginPasswordController01.text).then((sucess) {
+                if(!store.isLoading){//evitar duplo click
+                  
+                    store.setIsLoading(true);
+                    if(loginPasswordController01.text.length > 4 && RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(loginEmailController.text)){
+                      if(newAcc){
+                        if(loginPasswordController01.text == loginPasswordController02.text) {
+                          AuthService().createUserLogin(loginEmailController.text, loginPasswordController01.text).then((sucess) {
+                            if(sucess) 
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+                            else
+                              HelperFunctions.showInSnackBar("Error!", _scaffoldKey, context, Consts.terciaryColor);
+                            store.setIsLoading(false);
+                          });
+                        }else{
+                          HelperFunctions.showInSnackBar("Password not match!", _scaffoldKey, context, Consts.terciaryColor);
+                          store.setIsLoading(false);
+                        }
+                      }
+                      else{
+                        AuthService().signIn(loginEmailController.text, loginPasswordController01.text).then((sucess) {
                           if(sucess) 
                             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
                           else
-                            showInSnackBar("Error!");
+                            HelperFunctions.showInSnackBar("Incorrect credentials", _scaffoldKey, context, Consts.terciaryColor);
+                          store.setIsLoading(false);
                         });
-                      }else{
-                        showInSnackBar("Password not match!");
                       }
+                    }else{
+                      HelperFunctions.showInSnackBar("Fill in all the fields!", _scaffoldKey, context, Consts.terciaryColor);
+                      store.setIsLoading(false);
                     }
-                    else{
-                      AuthService().signIn(loginEmailController.text, loginPasswordController01.text).then((sucess) {
-                        if(sucess) 
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-                        else
-                          showInSnackBar("Incorrect credentials");
-                      });
-                    }
-                  }else{
-                    showInSnackBar("Fill in all the fields!");
-                  }
-                });
+                  
+                }
               },
-                heroTag: "login",
-              label: Text("Login", style: TextStyle(color: Colors.white)),
-              backgroundColor: primaryColor,
+              heroTag: "login",
+              label: store.isLoading ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Consts.segundaryColor),) : Text("Login", style: TextStyle(color: Colors.white)),
+              backgroundColor: Consts.primaryColor,
             ),
           ),
           Padding(
             padding: EdgeInsets.only(top: 10.0),
             child: TextButton(
               onPressed: () {
-                showInSnackBar("Wait for updates!");
+                HelperFunctions.showInSnackBar("Wait for updates!", _scaffoldKey, context, Consts.terciaryColor);
               },
               child: Text(
                 "Forgot Password?",
                 style: TextStyle(
                   decoration: TextDecoration.underline,
-                  color: terciaryColor,
+                  color: Consts.terciaryColor,
                   fontSize: 16.0,
                   fontFamily: "WorkSansMedium"),
               )

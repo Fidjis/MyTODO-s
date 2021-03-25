@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_todo_s/helper/consts.dart';
 import 'package:my_todo_s/services/database.dart';
 
 class CheckboxWidget extends StatefulWidget {
@@ -15,16 +16,15 @@ class CheckboxWidget extends StatefulWidget {
 
 class _CheckboxWidgetState extends State<CheckboxWidget> {
 
-  bool checkedValue;
-  var primaryColor = const Color(0xFF008080);
-  var segundaryColor = Colors.white;
-  var terciaryColor = const Color(0xFF20B2AA);
+  bool checkedValue; 
 
   @override
   Widget build(BuildContext context) {
     return CheckboxListTile(
-      activeColor: primaryColor,
-      title: Text(widget.text, style: TextStyle(color: Colors.black)),
+      activeColor: Consts.primaryColor,
+      title: widget.checkedValue ? 
+        Text(widget.text, style: TextStyle(color: Colors.black, decoration: TextDecoration.lineThrough)) : //texto com Tracado
+        Text(widget.text, style: TextStyle(color: Colors.black, )), //texto sem tracado
       value: widget.checkedValue,
       onChanged: (newValue) {
         setState(() {
@@ -32,6 +32,9 @@ class _CheckboxWidgetState extends State<CheckboxWidget> {
           updateTask();
         });
       },
+      secondary: IconButton(icon: Icon(Icons.delete), color: Consts.primaryColor,onPressed: (){
+        deleteTask();
+      }),
       controlAffinity: ListTileControlAffinity.leading, 
     );
   }
@@ -39,10 +42,44 @@ class _CheckboxWidgetState extends State<CheckboxWidget> {
   updateTask() async {
     bool result = await DatabaseMethods().updateTask(widget.id, !widget.checkedValue);
     if(result)
-      print("Sucesssooooooo");
+      print("Sucesso");
       // showInSnackBar("Task Added!");
     else
-      print("Errrooooooo");
+      print("Errro");
       // showInSnackBar("Error!");
+  }
+
+  deleteTask() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Attention!"),
+          content: Text("Are you sure you want to delete?"),
+          actions: [
+            TextButton(
+              child: Text("Cancel"),
+              onPressed:  () {
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              child: Text("Continue"),
+              onPressed:  () async {
+                bool result = await DatabaseMethods().deleteTask(widget.id);
+                if(result)
+                  print("Sucesso");
+                  // showInSnackBar("Task Added!");
+                else
+                  print("Errro");
+                  // showInSnackBar("Error!");
+
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 }

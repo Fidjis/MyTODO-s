@@ -15,11 +15,15 @@ abstract class PrincipalStBase with Store {
   
     @observable
     bool isLogged = false;
+
     @observable
     bool isLoading = false;
 
-    @computed
-    bool get issLoading => isLoading;
+    @observable
+    bool isLoadingTaskToDo = true;
+
+    @observable
+    bool isLoadingTaskDone = true;
     
     @action
     setLogged(bool val) {
@@ -29,5 +33,15 @@ abstract class PrincipalStBase with Store {
     @action
     setIsLoading(bool val) {
       isLoading = val;
+    }
+
+    @action
+    setIsLoadingTaskDone(bool val) {
+      isLoadingTaskDone = val;
+    }
+
+    @action
+    setiIsLoadingTaskToDo(bool val) {
+      isLoadingTaskToDo = val;
     }
 }

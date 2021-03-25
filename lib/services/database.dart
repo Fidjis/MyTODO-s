@@ -149,6 +149,29 @@ class DatabaseMethods {
     if(task.id != null) return true;
     else return false;
   }
+
+  Future<bool> deleteTask(String taskId) async {
+    HasuraConnect conexao = await HasuraConnect(http, headers: headers);
+
+    String query = """
+        mutation MyMutation {
+          delete_tasks(where: {id: {_eq: "${taskId}"}}) {
+            returning {
+              id
+            }
+          }
+        }
+        """;
+
+    bool isConnected = conexao.isConnected;
+    var snapshot = await conexao.mutation(query);
+
+    final responseJson = snapshot['data']["delete_tasks"]["returning"][0];
+    Task task =  Task.fromJson(responseJson);
+
+    if(task.id != null) return true;
+    else return false;
+  }
 }
 
 

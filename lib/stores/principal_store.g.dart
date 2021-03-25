@@ -9,14 +9,6 @@ part of 'principal_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$PrincipalSt on PrincipalStBase, Store {
-  Computed<bool> _$issLoadingComputed;
-
-  @override
-  bool get issLoading =>
-      (_$issLoadingComputed ??= Computed<bool>(() => super.issLoading,
-              name: 'PrincipalStBase.issLoading'))
-          .value;
-
   final _$isLoggedAtom = Atom(name: 'PrincipalStBase.isLogged');
 
   @override
@@ -47,6 +39,38 @@ mixin _$PrincipalSt on PrincipalStBase, Store {
     });
   }
 
+  final _$isLoadingTaskToDoAtom =
+      Atom(name: 'PrincipalStBase.isLoadingTaskToDo');
+
+  @override
+  bool get isLoadingTaskToDo {
+    _$isLoadingTaskToDoAtom.reportRead();
+    return super.isLoadingTaskToDo;
+  }
+
+  @override
+  set isLoadingTaskToDo(bool value) {
+    _$isLoadingTaskToDoAtom.reportWrite(value, super.isLoadingTaskToDo, () {
+      super.isLoadingTaskToDo = value;
+    });
+  }
+
+  final _$isLoadingTaskDoneAtom =
+      Atom(name: 'PrincipalStBase.isLoadingTaskDone');
+
+  @override
+  bool get isLoadingTaskDone {
+    _$isLoadingTaskDoneAtom.reportRead();
+    return super.isLoadingTaskDone;
+  }
+
+  @override
+  set isLoadingTaskDone(bool value) {
+    _$isLoadingTaskDoneAtom.reportWrite(value, super.isLoadingTaskDone, () {
+      super.isLoadingTaskDone = value;
+    });
+  }
+
   final _$PrincipalStBaseActionController =
       ActionController(name: 'PrincipalStBase');
 
@@ -73,11 +97,34 @@ mixin _$PrincipalSt on PrincipalStBase, Store {
   }
 
   @override
+  dynamic setIsLoadingTaskDone(bool val) {
+    final _$actionInfo = _$PrincipalStBaseActionController.startAction(
+        name: 'PrincipalStBase.setIsLoadingTaskDone');
+    try {
+      return super.setIsLoadingTaskDone(val);
+    } finally {
+      _$PrincipalStBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setiIsLoadingTaskToDo(bool val) {
+    final _$actionInfo = _$PrincipalStBaseActionController.startAction(
+        name: 'PrincipalStBase.setiIsLoadingTaskToDo');
+    try {
+      return super.setiIsLoadingTaskToDo(val);
+    } finally {
+      _$PrincipalStBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 isLogged: ${isLogged},
 isLoading: ${isLoading},
-issLoading: ${issLoading}
+isLoadingTaskToDo: ${isLoadingTaskToDo},
+isLoadingTaskDone: ${isLoadingTaskDone}
     ''';
   }
 }

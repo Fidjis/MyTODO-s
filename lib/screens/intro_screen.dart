@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:my_todo_s/helper/auth_service.dart';
 import 'package:my_todo_s/helper/consts.dart';
 import 'package:my_todo_s/helper/helper_functions.dart';
-import 'package:my_todo_s/models/user_model.dart';
 import 'package:my_todo_s/screens/home_screen.dart';
 import 'package:my_todo_s/screens/login_screen.dart';
-import 'package:my_todo_s/services/database.dart';
 import 'package:my_todo_s/stores/principal_store.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -18,9 +16,6 @@ class IntroScreen extends StatefulWidget {
 
 class _IntroScreenState extends State<IntroScreen> {
 
-  var primaryColor = const Color(0xFF008080);
-  var segundaryColor = Colors.white;
-  var terciaryColor = const Color(0xFF20B2AA);
   AuthService authService = new AuthService();
   final store = PrincipalSt();
 
@@ -61,10 +56,10 @@ class _IntroScreenState extends State<IntroScreen> {
           buildBackgroundAppName(),
           buildBackgroundAppNameShadow(),
           _buildBottom(),
-          FloatingActionButton(onPressed: () async {
-            bool user = await DatabaseMethods().createTask("d4b95036-9d63-4356-814a-3a20768b10ce", "teste 1");
-            print(user);
-          })
+          // FloatingActionButton(onPressed: () async {
+          //   bool user = await DatabaseMethods().createTask("d4b95036-9d63-4356-814a-3a20768b10ce", "teste 1");
+          //   print(user);
+          // })
         ],
       ),
     ));
@@ -88,7 +83,7 @@ class _IntroScreenState extends State<IntroScreen> {
               }, 
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text('Registrar', style: TextStyle(color: primaryColor),),
+                child: Text('Registrar', style: TextStyle(color: Consts.primaryColor),),
               ),
             ),
             Container(
@@ -96,7 +91,7 @@ class _IntroScreenState extends State<IntroScreen> {
                 gradient: new LinearGradient(
                   colors: [
                     Colors.white10,
-                    primaryColor,
+                    Consts.primaryColor,
                   ],
                   begin: const FractionalOffset(0.0, 0.0),
                   end: const FractionalOffset(1.0, 1.0),
@@ -111,7 +106,7 @@ class _IntroScreenState extends State<IntroScreen> {
               child: Text(
                 "Ou",
                 style: TextStyle(
-                  color: primaryColor,
+                  color: Consts.primaryColor,
                   fontSize: 16.0,
                   fontFamily: "WorkSansMedium"),
               ),
@@ -120,7 +115,7 @@ class _IntroScreenState extends State<IntroScreen> {
               decoration: BoxDecoration(
                 gradient: new LinearGradient(
                   colors: [
-                    primaryColor,
+                    Consts.primaryColor,
                     Colors.white10,
                   ],
                   begin: const FractionalOffset(0.0, 0.0),
@@ -133,7 +128,7 @@ class _IntroScreenState extends State<IntroScreen> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: primaryColor, // background
+                primary: Consts.primaryColor, // background
                 onPrimary: Colors.white, // foreground
               ),
               onPressed: () {
@@ -142,7 +137,7 @@ class _IntroScreenState extends State<IntroScreen> {
               },
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(14.0, 8.0, 14.0, 8.0),
-                child: Text('Login', style: TextStyle(color: segundaryColor),),
+                child: Text('Login', style: TextStyle(color: Consts.segundaryColor),),
               ),
             )
           ],
@@ -157,7 +152,7 @@ class _IntroScreenState extends State<IntroScreen> {
       child: Text(
         "MyTODO's",
         style: TextStyle(
-          color: primaryColor,
+          color: Consts.primaryColor,
           fontSize: 50,
           fontFamily: "Lobster",
           fontWeight: FontWeight.bold,
