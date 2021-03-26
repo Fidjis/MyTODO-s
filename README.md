@@ -23,8 +23,7 @@ Link do site disponivel <a href="https://mytodoappweb.herokuapp.com/#/" target="
 
 ## Mobile
 
-<p> PLAY STORE (aprovação em analise) : <a href="https://play.google.com/store/apps/details?id=com.fidjis.my_todo_s" target="_blank">Click aqui!</a>. </p>
-<p> APK (caso a play store não tenha terminado a aprovação) : <a href="https://drive.google.com/file/d/16HC8bNFtT0dUGGkkf9dryVumwzbFgmhf/view?usp=sharing" target="_blank">Click aqui!</a>. </p>
+<p> Disponivel na PlayStores : <a href="https://play.google.com/store/apps/details?id=com.fidjis.my_todo_s" target="_blank">Click aqui!</a>. </p>
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/19561046/112570672-be7d4b00-8da3-11eb-9ee5-a73db1b04bc4.png" width="300">
