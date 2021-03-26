@@ -1,3 +1,4 @@
+
 # My TODO's
 
 Aplicativo web/mobile feito com FLutter 2.0 e GraphQL
@@ -8,21 +9,25 @@ This project is a starting point for a Flutter application.
 
 ## WEB
 
-Link disponivel <a href="https://mytodoappweb.herokuapp.com/#/">aqui</a>
+Link do site disponivel <a href="https://mytodoappweb.herokuapp.com/#/">aqui</a>.
+
+![Captura de Tela 2021-03-25 às 23 35 58](https://user-images.githubusercontent.com/19561046/112570709-d2c14800-8da3-11eb-84da-ef81b103a34f.png)
+
 
 <img src="https://drive.google.com/file/d/18zrr2KbcA-GknPEWQWL9olvFXsvhrXVg/view?usp=sharing" style="width:100%">
 
 <div >
-  <img src="https://drive.google.com/file/d/1AUdtiBq7lj0Q564NJ0itkovgAHDqd6RC/view?usp=sharing" style="width:100%">
-  <img src="https://drive.google.com/file/d/1MXwNSVE4vhosxlrbOBaKbLsUUPsuRfO8/view?usp=sharing" style="width:100%">
+  ![Captura de Tela 2021-03-25 às 23 35 28](https://user-images.githubusercontent.com/19561046/112570703-cf2dc100-8da3-11eb-828f-1b28912396d5.png)
+  ![Captura de Tela 2021-03-25 às 23 35 28](https://user-images.githubusercontent.com/19561046/112570612-9aba0500-8da3-11eb-9206-1dbf612b7ec5.png)
 </div>
 
-<div >
-  <div class="w3-half">
-    <img src="https://drive.google.com/file/d/1frRIEYpq5lPqv6aWRxLjdudtJcJNrnra/view?usp=sharing" style="width:100%">
-  </div>
-  <div class="w3-half">
-    <img src="https://drive.google.com/file/d/1hiIsvd_psDvReiDjjgBbQHRyO-aSI4-W/view?usp=sharing" style="width:100%">
-  </div>
+## Mobile
 
+### PLAY STORE (aprovação em analise) : <a href="https://play.google.com/store/apps/details?id=com.fidjis.my_todo_s">Click aqui!</a>. 
+### APK (caso play store nao terminou a aprovação) : <a href="https://drive.google.com/file/d/16HC8bNFtT0dUGGkkf9dryVumwzbFgmhf/view?usp=sharing">Click aqui!</a>.
+
+<div class="">
+  ![Simulator Screen Shot - iPhone 8 Plus - 2021-03-23 at 14 08 09](https://user-images.githubusercontent.com/19561046/112570672-be7d4b00-8da3-11eb-9ee5-a73db1b04bc4.png)
+  ![Simulator Screen Shot - iPhone 8 Plus - 2021-03-23 at 14 08 48](https://user-images.githubusercontent.com/19561046/112570676-c0dfa500-8da3-11eb-926e-04befa6d791f.png)
 </div>
+
