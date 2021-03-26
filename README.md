@@ -3,8 +3,8 @@
 
 ## Inicio
 
-Aplicativo web/mobile feito com FLutter 2.0 e GraphQL 
-Autor: <a href="https://www.linkedin.com/in/everson-dias-ferreira/">Everson Dias Ferreira</a>.
+<p> Aplicativo web/mobile feito com FLutter 2.0 e GraphQL </p>
+<p> Autor: <a href="https://www.linkedin.com/in/everson-dias-ferreira/">Everson Dias Ferreira</a>. </p>
 
 ## WEB
 
