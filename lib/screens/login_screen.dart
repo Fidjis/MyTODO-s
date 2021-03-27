@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
   _buildBody() {
     return Observer(
       builder: (_) =>Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Consts.segundaryColor,
       key: _scaffoldKey,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -280,12 +280,11 @@ class _LoginScreenState extends State<LoginScreen> {
             child: FloatingActionButton.extended(
               onPressed: (){
                 if(!store.isLoading){//evitar duplo click
-                  
                     store.setIsLoading(true);
-                    if(loginPasswordController01.text.length > 4 && RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(loginEmailController.text)){
+                    if(loginPasswordController01.text.trim().length > 4 && RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(loginEmailController.text.trim())){
                       if(newAcc){
-                        if(loginPasswordController01.text == loginPasswordController02.text) {
-                          AuthService().createUserLogin(loginEmailController.text, loginPasswordController01.text).then((sucess) {
+                        if(loginPasswordController01.text.trim() == loginPasswordController02.text.trim()) {
+                          AuthService().createUserLogin(loginEmailController.text.trim(), loginPasswordController01.text.trim()).then((sucess) {
                             if(sucess) 
                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
                             else
@@ -298,7 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       }
                       else{
-                        AuthService().signIn(loginEmailController.text, loginPasswordController01.text).then((sucess) {
+                        AuthService().signIn(loginEmailController.text.trim(), loginPasswordController01.text.trim()).then((sucess) {
                           if(sucess) 
                             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
                           else

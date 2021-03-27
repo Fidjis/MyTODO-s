@@ -11,7 +11,7 @@ class AuthService {
   Future<bool> createUserLogin(String email, String pass) async {
     User user = await DatabaseMethods().createUser(email, email, pass);
     if(user != null){
-      store.setLogged(true);
+      
 
       Consts.userEmail = user.name;
       Consts.userID = user.id;
@@ -20,6 +20,8 @@ class AuthService {
       await HelperFunctions.saveUserNameSharedPreference(user.user_name);
       await HelperFunctions.saveUserIdSharedPreference(user.id.toString());
       await HelperFunctions.saveUserLoggedInSharedPreference(true);
+
+      store.setLogged(true);
       return true;
     }else 
       return false;
@@ -29,7 +31,6 @@ class AuthService {
     User user = await DatabaseMethods().singIn(email, pass);
     if(user != null){
       if(user.password == pass){
-        store.setLogged(true);
 
         Consts.userEmail = user.name;
         Consts.userID = user.id;
@@ -38,6 +39,9 @@ class AuthService {
         await HelperFunctions.saveUserNameSharedPreference(user.user_name);
         await HelperFunctions.saveUserIdSharedPreference(user.id.toString());
         await HelperFunctions.saveUserLoggedInSharedPreference(true);
+
+        store.setLogged(true);
+        
         return true;
       }
       return false;

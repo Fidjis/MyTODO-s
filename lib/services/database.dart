@@ -34,6 +34,8 @@ class DatabaseMethods {
     // return User.fromJson(responseJson);
 
     bool isConnected = conexao.isConnected;
+    if(!isConnected) return null;
+
     var snapshot = await conexao.mutation(query);
     // print(snapshot['data']["users"][0].toString());
     print(snapshot['data']["insert_users"]["returning"].toString());
@@ -56,10 +58,7 @@ class DatabaseMethods {
           }
         """;
 
-    bool isConnected = conexao.isConnected;
     var snapshot = await conexao.query(query);
-    // print(snapshot['data']["users"][0].toString());
-    //print(snapshot['data']["users"][0].toString());
     
     final responseJson = snapshot['data']["users"][0];
     return User.fromJson(responseJson);
@@ -77,6 +76,8 @@ class DatabaseMethods {
         """;
 
     bool isConnected = conexao.isConnected;
+    if(!isConnected) return false;
+
     var snapshot = await conexao.query(query);
     
     final List<dynamic> responseJson = snapshot['data']["users"];
@@ -99,7 +100,6 @@ class DatabaseMethods {
         }
         """;
 
-    bool isConnected = conexao.isConnected;
     var snapshot = await conexao.subscription(query);
 
     return snapshot;
@@ -118,7 +118,6 @@ class DatabaseMethods {
         }
         """;
 
-    bool isConnected = conexao.isConnected;
     var snapshot = await conexao.mutation(query);
     print(snapshot['data']["insert_tasks"]["returning"].toString());
     
@@ -140,7 +139,6 @@ class DatabaseMethods {
         }
         """;
 
-    bool isConnected = conexao.isConnected;
     var snapshot = await conexao.mutation(query);
 
     final responseJson = snapshot['data']["update_tasks_by_pk"];
@@ -162,8 +160,7 @@ class DatabaseMethods {
           }
         }
         """;
-
-    bool isConnected = conexao.isConnected;
+    
     var snapshot = await conexao.mutation(query);
 
     final responseJson = snapshot['data']["delete_tasks"]["returning"][0];
